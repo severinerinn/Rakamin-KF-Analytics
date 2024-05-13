@@ -1,0 +1,11 @@
+SELECT
+    discount_percentage,
+    COUNT(transaction_id) AS number_of_transactions,  -- Menghitung jumlah transaksi per diskon
+    ROUND(SUM(price * (1 - discount_percentage/100)),2) AS total_revenue,  -- Menghitung total pendapatan setelah diskon
+    AVG(rating) AS average_rating  -- Menghitung rata-rata rating
+FROM
+    `kf_final_transaction_csv.kf_final_transaction`
+GROUP BY
+    discount_percentage
+ORDER BY
+    discount_percentage ASC;
