@@ -1,0 +1,7 @@
+/* TOTAL TRANSAKSI TIAP PROVINSI */
+
+SELECT kc.provinsi, COUNT(ft.transaction_id) as total_transaksi
+FROM `kf_final_transaction_csv.kf_final_transaction`ft JOIN `kf_kantor_cabang_csv.kf_kantor_cabang`kc
+ON ft.branch_id = kc.branch_id
+GROUP BY kc.provinsi
+ORDER BY total_transaksi DESC
