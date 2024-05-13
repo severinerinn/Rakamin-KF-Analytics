@@ -1,0 +1,20 @@
+/* Top 5 cabang dengan rating tinggi tapi rating transaksi rendah  */
+
+WITH ratingCabang as (
+  SELECT kc.branch_id, kc.branch_name, provinsi, kc.rating as rating_cabang, ROUND(AVG(ft.rating),3) as avg_rating_transaksi
+  FROM `kf_final_transaction_csv.kf_final_transaction`ft JOIN `kf_kantor_cabang_csv.kf_kantor_cabang`kc
+  ON ft.branch_id = kc.branch_id 
+  GROUP BY kc.branch_id, kc.branch_name, provinsi, rating_cabang
+),
+rankCabang as (
+  SELECT branch_id, branch_name, provinsi, rating_cabang, avg_rating_transaksi, 
+  RANK() OVER (ORDER BY rating_cabang DESC) as rank_rating_cabang,
+  RANK() OVER (ORDER BY avg_rating_transaksi ASC) as rank_rating_transaksi
+  FROM ratingCabang
+)
+
+SELECT branch_id, branch_name, provinsi, rating_cabang, avg_rating_transaksi, 
+FROM rankCabang
+WHERE rank_rating_cabang <= 5
+ORDER BY rank_rating_transaksi ASC 
+LIMIT 5;
