@@ -1,0 +1,21 @@
+SELECT ft.transaction_id, ft.date, ft.branch_id, branch_name, kota, provinsi, kc.rating as rating_cabang, ft.customer_name, ft.product_id, product_name, pr.price as actual_price, discount_percentage,
+  CASE 
+  WHEN pr.price <= 50000 THEN 10
+  WHEN pr.price > 50000 AND pr.price <= 100000 THEN 15
+  WHEN pr.price > 100000 AND pr.price <= 300000 THEN 20
+  WHEN pr.price > 300000 AND pr.price <= 500000 THEN 25
+  WHEN pr.price > 500000 THEN 30
+  END AS persentase_gross_laba,
+(pr.price * (1 - discount_percentage)) as nett_sales, ROUND((pr.price * (1 - discount_percentage) * 
+  CASE
+  WHEN pr.price <= 50000 THEN 0.10
+  WHEN pr.price > 50000 AND pr.price <= 100000 THEN 0.15
+  WHEN pr.price > 100000 AND pr.price <= 300000 THEN 0.20
+  WHEN pr.price > 300000 AND pr.price <= 500000 THEN 0.25
+  WHEN pr.price > 500000 THEN 0.30
+  END), 2) as nett_profit,
+ft.rating as rating_transaksi
+FROM `kf_product_csv.kf_product`pr JOIN `kf_final_transaction_csv.kf_final_transaction`ft 
+ON pr.product_id = ft.product_id JOIN `kf_kantor_cabang_csv.kf_kantor_cabang`kc
+ON ft.branch_id = kc.branch_id 
+ORDER BY transaction_id
