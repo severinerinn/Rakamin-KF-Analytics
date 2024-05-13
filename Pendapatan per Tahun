@@ -1,0 +1,13 @@
+/* PENDAPATAN PER TAHUN */
+
+SELECT EXTRACT(YEAR FROM ft.date) as tahun, SUM(ROUND((pr.price * (1 - discount_percentage) * 
+  CASE
+  WHEN pr.price <= 50000 THEN 0.10
+  WHEN pr.price > 50000 AND pr.price <= 100000 THEN 0.15
+  WHEN pr.price > 100000 AND pr.price <= 300000 THEN 0.20
+  WHEN pr.price > 300000 AND pr.price <= 500000 THEN 0.25
+  WHEN pr.price > 500000 THEN 0.30
+  END), 2) ) as nett_profit
+FROM `kf_final_transaction_csv.kf_final_transaction`ft JOIN `kf_product_csv.kf_product`pr
+ON ft.product_id = pr.product_id
+GROUP BY EXTRACT(YEAR FROM ft.date);
